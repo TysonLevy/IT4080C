@@ -62,11 +62,7 @@ public class Lobby : NetworkBehaviour {
 
     [ClientRpc]
     private void PopulateClientInfoClientRpc(ClientRpcParams clientRpcParams = default) {
-        NetworkPlayerInfo myInfo = networkedPlayers.GetMyInfo();
-        if (myInfo.clientId != ulong.MaxValue)
-        {
-            lobbyUi.SetPlayerName(myInfo.playerName.ToString());
-        }
+        PopulateMyInfo();
     }
 
     private void ServerPopulateCards() {
