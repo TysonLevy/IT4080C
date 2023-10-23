@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.bitwes.multirun": {
+      "version": "https://github.com/ProfButch/MultiRun.git?path=Packages/MultiRun",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ae914d632beb37d3e4125920dd9dfb3149040cf2"
+    },
     "com.unity.burst": {
       "version": "1.6.6",
       "depth": 2,
