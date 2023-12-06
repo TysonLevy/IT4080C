@@ -8,10 +8,12 @@ public class Player : NetworkBehaviour {
     public float rotationSpeed = 130f;
     public NetworkVariable<Color> playerColorNetVar;
     public BulletSpawner bulletSpawner;
-    public NetworkVariable<int> ScoreNetVar = new NetworkVariable<int>(0);
+    public NetworkVariable<int> ScoreNetVar = new NetworkVariable<int>();
 
     private Camera playerCamera;
     private GameObject playerbody;
+
+    public NetworkVariable<int> playerHP = new NetworkVariable<int>();
 
     private void NetworkInit() {
         playerCamera = transform.Find("Camera").GetComponent<Camera>();
@@ -39,6 +41,7 @@ public class Player : NetworkBehaviour {
         NetworkHelper.Log(this, "OnNetworkSpawn");
         NetworkInit();
         base.OnNetworkSpawn();
+        playerHP.Value = 100;
     }
 
     private void OnCollisionEnter(Collision collision) { 
@@ -47,11 +50,16 @@ public class Player : NetworkBehaviour {
         }
     }
 
-    private void OnTriggerEnter(Collider other) { 
-        if (IsServer) { 
-            if(other.CompareTag("power_up")) {
-                other.GetComponent<BasePowerUp>().ServerPickUp(this);
-            }
+    private void OnTriggerEnter(Collider other) {
+        if (!IsServer) return;
+        
+        if(other.CompareTag("power_up")) {
+            other.GetComponent<BasePowerUp>().ServerPickUp(this);
+        }
+
+        if(other.GetComponent<HealthPickup>()) {
+            if (playerHP.Value <= 50) playerHP.Value += 50;
+            else playerHP.Value = 100;
         }
     }
 
@@ -61,6 +69,8 @@ public class Player : NetworkBehaviour {
             NetworkHelper.Log(this, $"Hit by {collision.gameObject.name} " + $"owned by {ownerId}");
             Player other = NetworkManager.Singleton.ConnectedClients[ownerId].PlayerObject.GetComponent<Player>();
             other.ScoreNetVar.Value += 1;
+            playerHP.Value -= 10;
+            NetworkHelper.Log(this, "was hit");
             Destroy(collision.gameObject);
         }
     }
@@ -154,4 +164,7 @@ public class Player : NetworkBehaviour {
 
         return moveVect;
     }
+
 }
+
+

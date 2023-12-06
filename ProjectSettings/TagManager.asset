@@ -6,6 +6,7 @@ TagManager:
   tags:
   - bullet
   - power_up
+  - health
   layers:
   - Default
   - TransparentFX
